@@ -59,7 +59,7 @@ fpga_run_time = end - start
 
 A_matrix = input_buffer1.reshape((int(math.sqrt(data_size_1)),int(math.sqrt(data_size_1))))
 B_matrix = input_buffer2.reshape((int(math.sqrt(data_size_2)),int(math.sqrt(data_size_2))))
-Output_matrix = output_buffer.reshape((int(math.sqrt(data_size_3)),int(math.sqrt(data_size))))
+Output_matrix = output_buffer.reshape((int(math.sqrt(data_size_3)),int(math.sqrt(data_size_3))))
 
 print('A Matrix :')
 print(A_matrix)
