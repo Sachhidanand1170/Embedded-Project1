@@ -30,7 +30,7 @@ void conv_optm(hls::stream<axis_data> &in_A, hls::stream<axis_data> &out_C) {
 	 int col;
 	 int x = (((h+(2*p))-kernel)/s)+1;
 	 int y = (((w+(2*p))-kernel)/s)+1;
-	 axis_data st;
+	 axis_data str;
 
 
 	 Mat_Dtype input_image[h][w];
@@ -44,48 +44,47 @@ void conv_optm(hls::stream<axis_data> &in_A, hls::stream<axis_data> &out_C) {
 	loop_input_A1: for(row=0; row < h; row++){
 		loop_input_A2: for(col=0; col < w; col++){
 			#pragma HLS PIPELINE
-			st = in_A.read();
-			input_image[row][col] = st.data;
+			str = in_A.read();
+			input_image[row][col] = str.data;
 		}
 	}
 
 	// read data for Filter Matrix
 
-		loop_input_B1: for(row=0; row < kernel; row++){
-			loop_input_B2: for(col=0; col < kernel; col++){
-				#pragma HLS PIPELINE
-				st = in_A.read();
-				filter[row][col] = st.data;
-			}
+	loop_input_B1: for(row=0; row < kernel; row++){
+		loop_input_B2: for(col=0; col < kernel; col++){
+			#pragma HLS PIPELINE
+			str = in_A.read();
+			filter[row][col] = str.data;
 		}
+	}
 
 	// Perform convolution
-	   loop1: for (int row = 0; row < x; ++row) {
-	       loop2: for (int col = 0; col < y; ++col) {
+	loop1: for (int row = 0; row < x; ++row) {
+		loop2: for (int col = 0; col < y; ++col) {
 			#pragma HLS PIPELINE II=2
 	        	output[row][col] = 0;
-	            loop3: for (int i = 0; i < kernel; ++i) {
-	                loop4: for (int j = 0; j < kernel; ++j) {
-				#pragma HLS PIPELINE
-	                	output[row][col]+= input_image[row + i][col + j] * filter[i][j];
-	                }
-	            }
+	            	loop3: for (int i = 0; i < kernel; ++i) {
+	                	loop4: for (int j = 0; j < kernel; ++j) {
+					#pragma HLS PIPELINE
+	                		output[row][col]+= input_image[row + i][col + j] * filter[i][j];
+	                	}
+	            	}
 	        }
-	    }
-	   // Write output matrix to AXI stream
-	      for (int row = 0; row < x; row++) {
-	          for (int col = 0; col < y; col++) {
-		      #pragma HLS PIPELINE
-	              st.data = output[row][col];
-	              if((row == x-1)&&(col == y-1)){
-	              st.last = 1;
-	              }
+	}
+	// Write output matrix to AXI stream
+	for (int row = 0; row < x; row++) {
+		for (int col = 0; col < y; col++) {
+			#pragma HLS PIPELINE
+	              	str.data = output[row][col];
+	              	if((row == x-1)&&(col == y-1)){
+	              		str.last = 1;
+	              	}
 
-	              else{
-	              st.last = 0;
-	              }
-	              out_C.write(st);
+	              	else{
+	              		str.last = 0;
+	              	}
+	              	out_C.write(str);
 	          }
-	      }
+	}
 }
-
