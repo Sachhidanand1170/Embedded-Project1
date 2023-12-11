@@ -7,8 +7,8 @@ import time
 
 # ### Program the FPGA with the bit file
 
-ol = Overlay("/home/xilinx/jupyter_notebooks/design_conv.bit")
-
+ol = Overlay("/home/xilinx/jupyter_notebooks/design_1.bit")
+## ol = Overlay("/home/xilinx/jupyter_notebooks/design_optm.bit")
 
 # ### Check the IPs in the overaly (configuration provided by the bit file)
 
